@@ -6,7 +6,6 @@
     <version>1.0</version>
   </parent>
   <artifactId>hazelcast</artifactId>
-  <version>1.0</version>
   <description>Implements the core library for Hazelcast.</description>
   
   <licenses>
@@ -21,7 +20,7 @@
   	<dependency>
   		<groupId>com.exxeta.jobstore</groupId>
   		<artifactId>core</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+  		<version>1.0</version>
   	</dependency>
 	
 	<dependency>
