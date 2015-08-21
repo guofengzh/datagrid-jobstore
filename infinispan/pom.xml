@@ -3,9 +3,19 @@
   <parent>
     <groupId>com.exxeta.jobstore</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <artifactId>infinispan</artifactId>
+  <version>1.0</version>
+  <description>Implements the core library for Infinispan.</description>
+  
+  
+  <licenses>
+  	<license>
+  		<name>Apache License, Version 2.0</name>
+  		<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+  	</license>
+  </licenses>
   
   <dependencies>
   	<dependency>
