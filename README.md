@@ -112,7 +112,7 @@ Assign:
 
 
 	#============================================================================
-	# Configure ThreadPool  
+	\# Configure ThreadPool  
 	#============================================================================
 	
 	org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
@@ -120,7 +120,7 @@ Assign:
 	org.quartz.threadPool.threadPriority: 5
 	
 	#============================================================================
-	# Configure JobStore  
+	\# Configure JobStore  
 	#============================================================================
 	
 	org.quartz.jobStore.misfireThreshold: 60000
