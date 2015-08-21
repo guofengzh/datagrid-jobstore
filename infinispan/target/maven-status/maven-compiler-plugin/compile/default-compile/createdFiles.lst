@@ -1,0 +1,4 @@
+com\exxeta\jobstore\infinispan\InfinispanJobStore.class
+com\exxeta\jobstore\infinispan\InfinispanCacheConnectorWithLocking.class
+com\exxeta\jobstore\infinispan\InfinispanClusterManagementListener.class
+com\exxeta\jobstore\infinispan\InfinispanCacheConnectorSupport.class
