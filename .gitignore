@@ -1,1 +1,4 @@
 /target/
+/core/target/
+/infinispan/target/
+/hazelcast/target/
