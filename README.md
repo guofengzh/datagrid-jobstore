@@ -109,10 +109,8 @@ Assign:
 
 * Additional configurations of your scheduler visit [Quartz configuration](http://quartz-scheduler.org/documentation/quartz-2.x/configuration/) for more information  
 
-
-
 	#============================================================================
-	\# Configure ThreadPool  
+	# Configure ThreadPool  
 	#============================================================================
 	
 	org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
@@ -120,7 +118,7 @@ Assign:
 	org.quartz.threadPool.threadPriority: 5
 	
 	#============================================================================
-	\# Configure JobStore  
+	# Configure JobStore  
 	#============================================================================
 	
 	org.quartz.jobStore.misfireThreshold: 60000
