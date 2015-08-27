@@ -107,7 +107,9 @@ Assign:
 
 * The full qualifying class name of the InfinispanJobStore
 
-* Additional configurations of your scheduler visit [Quartz configuration](http://quartz-scheduler.org/documentation/quartz-2.x/configuration/) for more information  
+* Additional configurations of your scheduler visit [Quartz configuration](http://quartz-scheduler.org/documentation/quartz-2.x/configuration/) for more information
+
+Note that we use the names of the caches and the JNDI that we declared under 1.1.1
 
 	#============================================================================
 	# Configure ThreadPool  
@@ -120,19 +122,16 @@ Assign:
 	#============================================================================
 	# Configure JobStore  
 	#============================================================================
-	
+
 	org.quartz.jobStore.misfireThreshold: 60000
 	
 	org.quartz.jobStore.class=com.exxeta.quartzscheduler.infinispan.InfinispanJobStore
 	
-	org.quartz.jobStore.infinispanJNDI: java:jboss/infinispan/jobStore
-	org.quartz.jobStore.infinispanJobStoreCacheJobsByKey: cacheOne
-	org.quartz.jobStore.infinispanJobStoreCacheTriggersByKey: cacheTwo
-	org.quartz.jobStore.infinispanJobStoreCacheCalendarsByName: cacheThree
-	org.quartz.jobStore.infinispanJobStoreCacheMetaData: cacheFour    
-
-
-Note that we use the names of the caches and the JNDI that we declared under 1.1.1
+	org.quartz.jobStore.infinispanJNDI: java:jboss/infinispan/jobStore  
+	org.quartz.jobStore.infinispanJobStoreCacheJobsByKey: cacheOne  
+	org.quartz.jobStore.infinispanJobStoreCacheTriggersByKey: cacheTwo  
+	org.quartz.jobStore.infinispanJobStoreCacheCalendarsByName: cacheThree  
+	org.quartz.jobStore.infinispanJobStoreCacheMetaData: cacheFour
 
 ## 1.3 Start the scheduler in your application
 
