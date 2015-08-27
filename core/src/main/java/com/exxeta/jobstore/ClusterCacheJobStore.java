@@ -1142,7 +1142,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 			StringBuffer logmessage = new StringBuffer(); 
 			logmessage.append("Following Triggers are now acquired by this node:");
 			for(OperableTrigger trigger:nextTriggersThatFire){
-				logmessage.append("\n- "+trigger.getKey().getName()+trigger.getKey().getGroup());
+				logmessage.append("\n- "+trigger.getKey().getName()+trigger.getKey().getGroup()+"\n"+connector.getTriggerWrapper(generateKey(trigger.getKey())).getTriggerInfo());
 			}
 			LOGGER_RUNNING_CHANGE.debug(logmessage);
 		}
@@ -1166,6 +1166,8 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	
 	@Override
 	public void releaseAcquiredTrigger(final OperableTrigger trigger) {
+		
+		LOGGER_RUNNING_CHANGE.debug("Trigger has been released: "+trigger.getKey().getName());
 		
 		//Retry releasing the Trigger until success
 		this.retryInfinite(new Retry() {
@@ -1340,6 +1342,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 				});
 			}
 		}, "triggered job complete");
+		
 	}
 	
 	private void triggeredJobCompleteJobCompletion(JobDetail completeJobDetail) throws JobPersistenceException{
@@ -1403,7 +1406,8 @@ public abstract class ClusterCacheJobStore implements JobStore {
 				TriggerWrapper storedTriggerWrapper = connector.getTriggerWrapper(triggerKey);
 				
 				if(storedTriggerWrapper != null){
-					storedTriggerWrapper.fireingInstance = null;
+					storedTriggerWrapper.state = TriggerWrapper.STATE_NORMAL;
+					storedTriggerWrapper.fireingInstance = null; //FIXME  hier release trigger aufrufen?
 					storedTriggerWrapper.jobExecuting = false;
 					
 					if(triggerInstCode == CompletedExecutionInstruction.DELETE_TRIGGER){
@@ -1577,7 +1581,9 @@ public abstract class ClusterCacheJobStore implements JobStore {
 					
 					for(TriggerWrapper tw:connector.getAllTriggers()){ //FIXME Knoten wird irgendwie nicht mehr gefunden im infinispanjobstore
 						
-						LOGGER_RECOVERY.debug("Review the trigger: "+generateKey(tw.trigger.getKey()) + "\n"+ tw.getTriggerInfo());
+						//FIXME es kann sein das der Job schon ausgeführt wurde, der scheduler den Trigger aber noch nicht wider freigegeben hat. dann ist der trigger acquired und die firering instance = null
+						
+						LOGGER_RECOVERY.debug("Review the trigger: "+"\n"+ tw.getTriggerInfo());
 												
 						if(tw.fireingInstance != null && tw.fireingInstance.equals(node)){
 							

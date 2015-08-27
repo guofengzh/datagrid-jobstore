@@ -64,7 +64,7 @@ public class TriggerWrapper implements java.io.Serializable {
 	 * @return a human readable description of the TriggerWrapper
 	 */
 	public String getTriggerInfo(){
-		return    "TriggerInfo: "
+		return    "TriggerInfo: " + ClusterCacheJobStore.generateKey(trigger.getKey())
 				+ "\nState: " + getTriggerStateName()
 				+ "\nFireringInstance: " + (fireingInstance == null ? "null": fireingInstance)
 				+ "\nJobExecuting: " + jobExecuting
