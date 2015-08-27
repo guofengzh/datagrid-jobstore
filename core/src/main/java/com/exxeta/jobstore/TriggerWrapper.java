@@ -58,5 +58,36 @@ public class TriggerWrapper implements java.io.Serializable {
 	public Date scheduleTime = null;
 	//is the job recovering
 	public boolean recovering = false;
+	
+	/**
+	 * For debugging
+	 * @return a human readable description of the TriggerWrapper
+	 */
+	public String getTriggerInfo(){
+		return    "TriggerInfo: "
+				+ "\nState: " + getTriggerStateName()
+				+ "\nFireringInstance: " + (fireingInstance == null ? "null": fireingInstance)
+				+ "\nJobExecuting: " + jobExecuting
+				+ "\nFireTime: "+ (fireTime == null ? "null": fireTime.toString())
+				+ "\nScheduleTime: "+ (scheduleTime == null ? "null": scheduleTime.toString())
+				+ "\nRecovering: "+ recovering;
+	}
+	
+	/**
+	 * For debugging 
+	 * @return the state of the TriggerWrapper in a human readable string
+	 */
+	public String getTriggerStateName(){
+		switch(state){
+		case STATE_ACQUIRED: return "Acquired";
+		case STATE_BLOCKED:  return "Blocked";
+		case STATE_COMPLETE: return "Complete";
+		case STATE_ERROR: 	 return "Error";
+		case STATE_NORMAL:   return "Normal";
+		case STATE_PAUSED:   return "Paused";
+		case STATE_PAUSED_AND_BLOCKED: return "Paused and Blocked";
+		default: return "unknwonw Trigger-state";
+		}
+	}
 
 }

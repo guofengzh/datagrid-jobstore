@@ -1067,10 +1067,12 @@ public abstract class ClusterCacheJobStore implements JobStore {
 		Set<String> triggerKeys = connector.getAllTriggerKeys();
 		
 		if(LOGGER_RUNNING_CHANGE.isDebugEnabled()){
-			LOGGER_RUNNING_CHANGE.debug("+All the Trigger Keys");
+			StringBuffer logmessage = new StringBuffer(); 
+			logmessage.append("All the Trigger Keys in the JobStore:");
 			for(String trigger:triggerKeys){
-				LOGGER_RUNNING_CHANGE.debug("+++"+trigger+" State: "+connector.getTriggerWrapper(trigger).state);
+				logmessage.append("\n-"+trigger+" State: "+connector.getTriggerWrapper(trigger).getTriggerStateName());
 			}
+			LOGGER_RUNNING_CHANGE.debug(logmessage);
 		}
 		
 		//remember if non Concurrent job will already be fired by other trigger
@@ -1137,11 +1139,12 @@ public abstract class ClusterCacheJobStore implements JobStore {
 		}
 		
 		if(LOGGER_RUNNING_CHANGE.isDebugEnabled()){
-			LOGGER_RUNNING_CHANGE.debug("-Following Triggers are acquired---");
+			StringBuffer logmessage = new StringBuffer(); 
+			logmessage.append("Following Triggers are now acquired by this node:");
 			for(OperableTrigger trigger:nextTriggersThatFire){
-				LOGGER_RUNNING_CHANGE.debug("--- "+trigger.getKey().getName()+trigger.getKey().getGroup());
-				LOGGER_RUNNING_CHANGE.debug("---> NextFireTime: "+trigger.getNextFireTime().getTime()+" NoLaterThan: "+ noLaterThan);
+				logmessage.append("\n- "+trigger.getKey().getName()+trigger.getKey().getGroup());
 			}
+			LOGGER_RUNNING_CHANGE.debug(logmessage);
 		}
 		
 		return returnList;
@@ -1210,10 +1213,13 @@ public abstract class ClusterCacheJobStore implements JobStore {
 			throws JobPersistenceException {
 		
 		if(LOGGER_RUNNING_CHANGE.isDebugEnabled()){
-			LOGGER_RUNNING_CHANGE.debug("-Following Triggers fired---");
+			StringBuffer logmessage = new StringBuffer();
+			logmessage.append("Following Triggers fired are now fired by the Scheduler on this node:");
+			
 			for(OperableTrigger trigger:triggers){
-				LOGGER_RUNNING_CHANGE.debug("--- "+trigger.getKey().getName()+trigger.getKey().getGroup());
+				logmessage.append("\n-"+trigger.getKey().getName()+trigger.getKey().getGroup());
 			}
+			LOGGER_RUNNING_CHANGE.debug(logmessage);
 		}
 		
 		final List<TriggerFiredResult> triggersFiredResult = new LinkedList<TriggerFiredResult>();
@@ -1318,7 +1324,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	public void triggeredJobComplete(final OperableTrigger completeTrigger,
 			final JobDetail completeJobDetail, final CompletedExecutionInstruction triggerInstCode) {
 		
-		LOGGER_RUNNING_CHANGE.debug("Triggered Job Complete, Trigger: "
+		LOGGER_RUNNING_CHANGE.debug("The following Trigger has fired a job that is now complete: "
 					 +completeTrigger.getKey().getName()+completeTrigger.getKey().getGroup()+
 					 " Job: "+completeJobDetail.getKey().getName()+completeJobDetail.getKey().getGroup());
 		
@@ -1478,10 +1484,12 @@ public abstract class ClusterCacheJobStore implements JobStore {
 		LOGGER_JOBSTORE_CHANGE.debug("Node: "+this.nodeId+" added to MetaData");
 		
 		if(LOGGER_RECOVERY.isDebugEnabled()){
-			LOGGER_RECOVERY.debug("Node name set got a new Member: "+nodeId+" Now the following nodes are known:");
+			StringBuffer logmessage = new StringBuffer();
+			logmessage.append("Node name set got a new Member: "+nodeId+" Now the following nodes are known:");
 			for(String s:nodes){
-				LOGGER_RECOVERY.debug("--"+s);
+				logmessage.append("\n-"+s);
 			}
+			LOGGER_RECOVERY.debug(logmessage);
 		}
 	}
 	
@@ -1555,7 +1563,6 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	 * It will free the acquired Triggers of the node who left the cluster.
 	 * It also will try to restart Jobs who require recovery.
 	 * @param node the node who left the cluster
-	 * @see GetNodeNameFromAdressToRecover
 	 */
 	public void recover(final String node){
 		
@@ -1565,9 +1572,16 @@ public abstract class ClusterCacheJobStore implements JobStore {
 				
 				Set<String> nodeNameSet = connector.getMetaData(METAKEY_NODE_ID_SET);
 				if(nodeNameSet.contains(node)){
-					for(TriggerWrapper tw:connector.getAllTriggers()){
+					
+					LOGGER_RECOVERY.debug("The missing Node: "+node+" has not yet been recovered, starting recovering now!");
+					
+					for(TriggerWrapper tw:connector.getAllTriggers()){ //FIXME Knoten wird irgendwie nicht mehr gefunden im infinispanjobstore
+						
+						LOGGER_RECOVERY.debug("Review the trigger: "+generateKey(tw.trigger.getKey()) + "\n"+ tw.getTriggerInfo());
+												
 						if(tw.fireingInstance != null && tw.fireingInstance.equals(node)){
-							LOGGER_RECOVERY.debug("recovering: "+ClusterCacheJobStore.generateKey(tw.trigger.getKey()));
+							
+							LOGGER_RECOVERY.debug("-Found a Trigger to recover: "+ClusterCacheJobStore.generateKey(tw.trigger.getKey()));
 							
 							//trigger was reserved by the missing node
 							String jobKey = ClusterCacheJobStore.generateKey(tw.trigger.getJobKey());
@@ -1633,7 +1647,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
                                 OperableTrigger recOpTrigger = (OperableTrigger) recoveryTrigger; 
                                 recOpTrigger.computeFirstFireTime(null);
                                 
-                                LOGGER_RECOVERY.debug("~Next Fire Time of recovering Trigger: "+ recoveryTrigger.getNextFireTime());
+                                LOGGER_RECOVERY.debug("-Next Fire Time of the recovering Trigger: "+ recoveryTrigger.getNextFireTime());
                                 try {
                                 	storeTrigger(recOpTrigger, false, true, true);
                                 } catch(JobPersistenceException jpe){
