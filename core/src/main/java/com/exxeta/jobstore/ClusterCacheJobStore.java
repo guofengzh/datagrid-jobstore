@@ -801,56 +801,71 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	 * @return true if a misfire insruction has been performed
 	 * @throws JobPersistenceException 
 	 */
-	boolean applyMisfire(final TriggerWrapper tw) throws JobPersistenceException{
-		long misfireTime = this.systemTime.currentTimeInMilliSeconds();
-        if (getMisfireThreshold() > 0) {
-            misfireTime -= getMisfireThreshold();
-        }
-        
-        Date tnft = tw.trigger.getNextFireTime();
-        if (tnft == null || 
-        		tnft.getTime() > misfireTime 
-                || tw.trigger.getMisfireInstruction() == Trigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY) { 
-        	//If no misfire instruction has to be performed
-        	return false; 
-        }
-		//Trigger has misfired
-        
-        if (tw.trigger.getCalendarName() != null) {
-        	Calendar cal = null;
-        	try {
-        		cal = retrieveCalendar(tw.trigger.getCalendarName());
-        	}catch(JobPersistenceException e){
-        		LOGGER_RUNNING_CHANGE.error(e.getMessage());
-        	}
-            this.schedulerSignaler.notifyTriggerListenersMisfired(tw.trigger);
-            //Update the calendar
-            tw.trigger.updateAfterMisfire(cal);
-        } else {
-        	this.schedulerSignaler.notifyTriggerListenersMisfired(tw.trigger);
-        	tw.trigger.updateAfterMisfire(null);
-        }
-
-        if(tw.trigger.getNextFireTime() == null){
-        	connector.doInTransaction(new TransactionScoped() {
-				@Override
-				public void doInTransaction() throws JobPersistenceException {
-					connector.lockTrigger(ClusterCacheJobStore.generateKey(tw.trigger.getKey()));
+	boolean applyMisfire(final TriggerWrapper twToCheck) throws JobPersistenceException{
+		
+		final String twKey = generateKey(twToCheck.trigger.getKey());
+		class Bool{public boolean value;}
+		final Bool retVal = new Bool();
+		
+		connector.doInTransaction(new TransactionScoped() {
+			@Override
+			public void doInTransaction() throws JobPersistenceException {
+				retVal.value = aplMsfr();
+			}
+			
+			private boolean aplMsfr() throws JobPersistenceException{
+				
+				connector.lockTrigger(twKey);
+				TriggerWrapper tw = connector.getTriggerWrapper(twKey);
+				
+				long misfireTime = systemTime.currentTimeInMilliSeconds();
+		        if (getMisfireThreshold() > 0) {
+		            misfireTime -= getMisfireThreshold();
+		        }
+		        
+		        Date tnft = tw.trigger.getNextFireTime();
+		        if (tnft == null ||	tnft.getTime() > misfireTime 
+		                || tw.trigger.getMisfireInstruction() == Trigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY) { 
+		        	//If no misfire instruction has to be performed
+		        	return false; 
+		        }
+				//Trigger has misfired
+		        
+		        
+		        Calendar cal = null;
+		        if (tw.trigger.getCalendarName() != null) {
+		        	try {
+		        		cal = retrieveCalendar(tw.trigger.getCalendarName());
+		        	}catch(JobPersistenceException e){
+		        		LOGGER_RUNNING_CHANGE.error(e.getMessage());
+		        		cal = null;
+		        	}
+		        }
+		        
+		        schedulerSignaler.notifyTriggerListenersMisfired(tw.trigger);
+				tw.trigger.updateAfterMisfire(cal);
+				connector.putTriggerWrapper(twKey, tw);
+		    	
+		        if(tw.trigger.getNextFireTime() == null){
+							
 		        	//Trigger will never fire again
 		        	tw.state = TriggerWrapper.STATE_COMPLETE;
-		        	
 		    		//save the state
 		    		connector.putTriggerWrapper(ClusterCacheJobStore.generateKey(tw.trigger.getKey()), tw);
-				}
-			});
-        	
-        	schedulerSignaler.notifySchedulerListenersFinalized(tw.trigger);
-        }
-        
-        LOGGER_RUNNING_CHANGE_MISFIRE.debug("Trigger misfired!: "+tw.trigger.getKey().getName()
-        			 +tw.trigger.getKey().getGroup()+" state: "+tw.state);
-        
-        return true;
+						
+		        	schedulerSignaler.notifySchedulerListenersFinalized(tw.trigger);
+		        }
+		        
+		        LOGGER_RUNNING_CHANGE_MISFIRE.debug("Trigger misfired!: "+tw.trigger.getKey().getName()
+		        			 +tw.trigger.getKey().getGroup()+" state: "+tw.state);
+		        
+		        return true;
+				
+			}
+			
+		});
+		
+		return retVal.value;
 	}
 
 	@Override
@@ -1407,7 +1422,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 				
 				if(storedTriggerWrapper != null){
 					storedTriggerWrapper.state = TriggerWrapper.STATE_NORMAL;
-					storedTriggerWrapper.fireingInstance = null; //FIXME  hier release trigger aufrufen?
+					storedTriggerWrapper.fireingInstance = null;
 					storedTriggerWrapper.jobExecuting = false;
 					
 					if(triggerInstCode == CompletedExecutionInstruction.DELETE_TRIGGER){
@@ -1579,9 +1594,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 					
 					LOGGER_RECOVERY.debug("The missing Node: "+node+" has not yet been recovered, starting recovering now!");
 					
-					for(TriggerWrapper tw:connector.getAllTriggers()){ //FIXME Knoten wird irgendwie nicht mehr gefunden im infinispanjobstore
-						
-						//FIXME es kann sein das der Job schon ausgeführt wurde, der scheduler den Trigger aber noch nicht wider freigegeben hat. dann ist der trigger acquired und die firering instance = null
+					for(TriggerWrapper tw:connector.getAllTriggers()){ 
 						
 						LOGGER_RECOVERY.debug("Review the trigger: "+"\n"+ tw.getTriggerInfo());
 												

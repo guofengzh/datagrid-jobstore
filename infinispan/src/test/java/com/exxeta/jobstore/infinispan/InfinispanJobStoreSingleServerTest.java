@@ -64,7 +64,6 @@ import org.quartz.spi.TriggerFiredResult;
 import com.exxeta.jobstore.ClusterCacheJobStore;
 import com.exxeta.jobstore.TimeOfSystem;
 import com.exxeta.jobstore.TriggerWrapper;
-import com.exxeta.jobstore.infinispan.InfinispanJobStore;
 
 /**
  * Tests the InfinispanJobStore
@@ -1191,7 +1190,7 @@ public class InfinispanJobStoreSingleServerTest {
 		try {
 			js.storeTrigger(triggerMock1, false);
 			assertTrue(applyMisfire(js, tw));
-			assertEquals(TriggerWrapper.STATE_COMPLETE, tw.state);
+			assertEquals(TriggerState.COMPLETE, js.getTriggerState(tk1));			
 			Mockito.verify(signaler).notifyTriggerListenersMisfired(triggerMock1);
 			Mockito.verify(signaler).notifySchedulerListenersFinalized(triggerMock1);
 		} catch(Exception e){
