@@ -28,10 +28,10 @@ public class QuartzInfinispanStoreAutoConfiguration {
     }
 
     @Bean
-    //public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory, JobsListenerService jobsListenerService)
     public SchedulerFactoryBean schedulerFactoryBean(
-            ApplicationContext applicationContext,
-            JobFactory jobFactory, //SchedulerFactory schedulerFactory,
+            //DataSource dataSource,
+            ApplicationContext applicationContext, JobFactory jobFactory,
+            //SchedulerFactory schedulerFactory,
             QuartzInfinispanConfigurationProperties quartzProperties,
             JobsListenerService jobsListenerService) throws IOException {
 

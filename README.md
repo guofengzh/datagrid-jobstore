@@ -1,3 +1,24 @@
+# Spring Boot + Quartz + Infinispan
+
+## Why forking?
+
+This fork is to enable [datagrid-jobstore](https://github.com/EXXETA/datagrid-jobstore) to run on Spring boot.
+
+## Configuration
+
+Configuration of Quartz in quartz.properties is now placed in the application.yaml/properties file. For example:
+```
+# application.properties
+org.quartz.threadPool.threadCount = 3
+```
+本项目支持有一些缺省配置，参见[QuartzInfinispanStoreAutoConfiguration.java)](https://github.com/guofengzh/datagrid-jobstore/blob/master/spring-boot-infinispan-quartz-starter/src/main/java/com/exxeta/jobstore/infinispan/autoconfig/QuartzInfinispanStoreAutoConfiguration.java)
+
+## Sample Application
+
+[infinispan-quartz-demo](https://github.com/guofengzh/datagrid-jobstore/blob/master/infinispan-quartz-demo/src/main/resources/infinispan.xml) is a sample application. The content of infinispan.xml is a required configuration. This configuration file is referenced by the application.yml file. This is required by [infinispan-spring-boot3-starter-embedded](https://infinispan.org/docs/stable/titles/spring_boot/starter.html) to configure Infinispan.
+
+> The following is the original readme content, please refer to the [original project](https://github.com/EXXETA/datagrid-jobstore).
+
 # Cluster Cache JobStore
 
 This project allows you to use a key/value store as a Quartz JobStore. See [Quartz tutorial Job Stores](http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-09) for more information. The Framework is already implemented for the data grids Infinispan and Hazelcast. Both implementations have been deployed and tested in a JBoss EAP-6.3.0 environment but may be used in any environment. 
