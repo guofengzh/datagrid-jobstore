@@ -11,7 +11,7 @@ Configuration of Quartz in quartz.properties is now placed in the application.ya
 # application.properties
 org.quartz.threadPool.threadCount = 3
 ```
-本项目支持有一些缺省配置，参见[QuartzInfinispanStoreAutoConfiguration.java)](https://github.com/guofengzh/datagrid-jobstore/blob/master/spring-boot-infinispan-quartz-starter/src/main/java/com/exxeta/jobstore/infinispan/autoconfig/QuartzInfinispanStoreAutoConfiguration.java)
+This project supports some default configurations, see [QuartzInfinispanStoreAutoConfiguration.java](https://github.com/guofengzh/datagrid-jobstore/blob/master/spring-boot-infinispan-quartz-starter/src/main/java/com/exxeta/jobstore/infinispan/autoconfig/QuartzInfinispanStoreAutoConfiguration.java).
 
 ## Sample Application
 
