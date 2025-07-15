@@ -19,7 +19,7 @@ public class TestServiceImpl implements TestService {
             throw new Exception("Randomly generated test exception on supervisor");
         }
         try {
-            Thread.sleep(TimeUnit.MINUTES.toMillis(1));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(15));
         } catch (InterruptedException e) {
             logger.error("Error", e);
         }

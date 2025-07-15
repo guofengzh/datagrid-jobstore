@@ -52,8 +52,8 @@ public class QuartzInfinispanStoreAutoConfiguration {
 
     /*
     @Bean
-    public SchedulerFactory scheduler(c
-                               QuartzInfinispanConfigurationProperties quartzProperties) throws SchedulerException {
+    public SchedulerFactory scheduler(ApplicationContext applicationContext,
+                                      QuartzInfinispanConfigurationProperties quartzProperties) throws SchedulerException {
         // setup application context
         SpringApplicationContextStore.setApplicationContext(applicationContext);
         Properties properties = createProperties(quartzProperties);

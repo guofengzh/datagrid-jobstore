@@ -59,6 +59,7 @@ public class JobsService {
                 .startNow()
                 .withSchedule(
                     simpleSchedule().withIntervalInSeconds(30)
+                            .withRepeatCount(10)
                 )
                 .build();
 
