@@ -26,14 +26,14 @@
 	<dependency>
 	    <groupId>com.hazelcast</groupId>
 	    <artifactId>hazelcast</artifactId>
-	    <version>3.5</version>
+	    <version>5.5.0</version>
 	</dependency>
 	
-	<dependency>
+	<!--dependency>
 		<groupId>com.hazelcast</groupId>
 		<artifactId>hazelcast-jca</artifactId>
 		<version>3.5</version>
-	</dependency>
+	</dependency-->
 	
   </dependencies>
   
@@ -43,10 +43,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+            <release>17</release>
         </configuration>
       </plugin>
     </plugins>

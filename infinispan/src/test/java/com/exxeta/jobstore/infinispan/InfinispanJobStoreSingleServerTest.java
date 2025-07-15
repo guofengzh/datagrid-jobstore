@@ -37,6 +37,10 @@ import java.util.Set;
 
 import org.infinispan.AdvancedCache;
 import org.infinispan.Cache;
+import org.infinispan.configuration.cache.CacheMode;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.junit.After;
@@ -73,7 +77,7 @@ public class InfinispanJobStoreSingleServerTest {
 	
 	private static final ClusterCacheJobStore js = new InfinispanJobStore();
 
-	private static  EmbeddedCacheManager cacheManager = new DefaultCacheManager();
+	private static  EmbeddedCacheManager cacheManager;
 	
 	private static AdvancedCache<String, JobDetail> jobCache;
 	private static AdvancedCache<String, TriggerWrapper> triggerCache;
@@ -93,7 +97,18 @@ public class InfinispanJobStoreSingleServerTest {
 		String metaCacheName = "meta";
 		
 		InfinispanCacheConnectorTestDummy connector = new InfinispanCacheConnectorTestDummy();
-		
+
+		GlobalConfigurationBuilder global = GlobalConfigurationBuilder.defaultClusteredBuilder();
+		cacheManager = new DefaultCacheManager(global.build());
+
+		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.clustering().cacheMode(CacheMode.LOCAL);
+		Configuration c = builder.build();
+		cacheManager.defineConfiguration(triggerCacheName, c);
+		cacheManager.defineConfiguration(jobCacheName, c);
+		cacheManager.defineConfiguration(calendarCacheName, c);
+		cacheManager.defineConfiguration(metaCacheName, c);
+
 		//Trigger Cache
 		Cache<String, TriggerWrapper> tempTriggerCache = cacheManager.getCache(triggerCacheName);
 		triggerCache = tempTriggerCache.getAdvancedCache();
@@ -1261,7 +1276,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jk1 = new JobKey("job1", "g1");
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock, false);
 			js.storeJob(jobDetailMock, false);
@@ -1300,7 +1315,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock1.getJobKey()).thenReturn(jk1);
 		when(triggerMock2.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1341,7 +1356,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock1.getJobKey()).thenReturn(jk1);
 		when(triggerMock2.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1383,7 +1398,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock1.getJobKey()).thenReturn(jk1);
 		when(triggerMock2.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1429,8 +1444,8 @@ public class InfinispanJobStoreSingleServerTest {
 		JobDetail jobDetailMock2 = mock(JobDetail.class);
 		when(jobDetailMock1.getKey()).thenReturn(jk1);
 		when(jobDetailMock2.getKey()).thenReturn(jk2);
-		when(jobDetailMock1.isConcurrentExectionDisallowed()).thenReturn(false);
-		when(jobDetailMock2.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock1.isConcurrentExecutionDisallowed()).thenReturn(false);
+		when(jobDetailMock2.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1526,7 +1541,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock1.getJobKey()).thenReturn(jk1);
 		when(triggerMock2.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1571,7 +1586,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock1.getJobKey()).thenReturn(jk1);
 		when(triggerMock2.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1617,7 +1632,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMockOutOfTimeWindow.getJobKey()).thenReturn(jk1);
 		when(triggerMockWithinTimeWindow.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMockOutOfTimeWindow, false);
 			js.storeTrigger(triggerMockWithinTimeWindow, false);
@@ -1659,7 +1674,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(triggerMock2.getMisfireInstruction()).thenReturn(Trigger.MISFIRE_INSTRUCTION_SMART_POLICY);
 		js.setMisfireThreshold(1);
 		//Only one trigger is allowed to fire the job because concurrent Execution is disallowed
-		when(jobDetailNoConcurrentExecution.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailNoConcurrentExecution.isConcurrentExecutionDisallowed()).thenReturn(true);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1706,7 +1721,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(triggerMock3.getMisfireInstruction()).thenReturn(Trigger.MISFIRE_INSTRUCTION_SMART_POLICY);
 		js.setMisfireThreshold(1);
 		//allow concurrency 
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1786,7 +1801,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(triggerMock3.getMisfireInstruction()).thenReturn(Trigger.MISFIRE_INSTRUCTION_SMART_POLICY);
 		js.setMisfireThreshold(1);
 		//allow concurrency 
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1868,7 +1883,7 @@ public class InfinispanJobStoreSingleServerTest {
 		when(triggerMock3.getMisfireInstruction()).thenReturn(Trigger.MISFIRE_INSTRUCTION_SMART_POLICY);
 		js.setMisfireThreshold(1);
 		//don't allow concurrency 
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		try {
 			js.storeTrigger(triggerMock1, false);
 			js.storeTrigger(triggerMock2, false);
@@ -1934,7 +1949,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jk1 = new JobKey("job1", "g1");
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock, false);
 			js.storeJob(jobDetailMock, false);
@@ -1968,7 +1983,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jk1 = new JobKey("job1", "g1");
 		when(jobDetailMock.getKey()).thenReturn(jk1);
 		when(triggerMock.getJobKey()).thenReturn(jk1);
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(false);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(false);
 		try {
 			js.storeTrigger(triggerMock, false);
 			js.storeJob(jobDetailMock, false);
@@ -2180,7 +2195,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jobKey = new JobKey("job", "group");
 		when(jobDetailMock.getKey()).thenReturn(jobKey);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Triggers
 		OperableTrigger triggerMock1= mock(OperableTrigger.class);
 		OperableTrigger triggerMock2= mock(OperableTrigger.class);
@@ -2228,7 +2243,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jobKey = new JobKey("job", "group");
 		when(jobDetailMock.getKey()).thenReturn(jobKey);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Triggers
 		OperableTrigger triggerMock1= mock(OperableTrigger.class);
 		OperableTrigger triggerMock2= mock(OperableTrigger.class);
@@ -2271,7 +2286,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jobKey = new JobKey("job", "group");
 		when(jobDetailMock.getKey()).thenReturn(jobKey);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Triggers
 		OperableTrigger triggerMock1= mock(OperableTrigger.class);
 		OperableTrigger triggerMock2= mock(OperableTrigger.class);
@@ -2318,7 +2333,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jobKey = new JobKey("job", "group");
 		when(jobDetailMock.getKey()).thenReturn(jobKey);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Triggers
 		OperableTrigger triggerMock1= mock(OperableTrigger.class);
 		TriggerKey triggerKey1 = new TriggerKey("name1", "group");
@@ -2361,7 +2376,7 @@ public class InfinispanJobStoreSingleServerTest {
 		JobKey jobKey = new JobKey("job", "group");
 		when(jobDetailMock.getKey()).thenReturn(jobKey);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Triggers
 		OperableTrigger triggerMock1= mock(OperableTrigger.class);
 		OperableTrigger triggerMock2= mock(OperableTrigger.class);
@@ -2444,7 +2459,7 @@ public class InfinispanJobStoreSingleServerTest {
 		SchedulerSignaler signaler = mock(SchedulerSignaler.class);
 		js.setSchedulerSignaler(signaler);
 		//disallow concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		try{
 			js.storeJob(jobDetailMock, false);
 			js.storeTrigger(triggerMock, false);
@@ -2587,7 +2602,7 @@ public class InfinispanJobStoreSingleServerTest {
 		js.setSystemTime(systemTimeMock);
 		when(systemTimeMock.currentTimeInMilliSeconds()).thenReturn(currentTime.getTime());
 		//forbid concurrency
-		when(jobDetailMock.isConcurrentExectionDisallowed()).thenReturn(true);
+		when(jobDetailMock.isConcurrentExecutionDisallowed()).thenReturn(true);
 		//Mock Signaler 
 		SchedulerSignaler signaler = mock(SchedulerSignaler.class);
 		js.setSchedulerSignaler(signaler);

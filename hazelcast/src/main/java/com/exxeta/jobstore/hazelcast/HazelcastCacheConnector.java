@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.map.IMap;
 import org.quartz.Calendar;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
@@ -33,7 +34,6 @@ import com.exxeta.jobstore.TriggerWrapper;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionException;
 import com.hazelcast.transaction.TransactionOptions;

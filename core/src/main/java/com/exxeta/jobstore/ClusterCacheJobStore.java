@@ -101,7 +101,6 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	/**
 	 * This Method should create a {@link com.exxeta.jobstore.CacheConnector}
 	 * and set it as {@link #connector}
-	 * @param loadHelper
 	 */
 	protected abstract void createCacheConnector() throws SchedulerConfigException;
 	
@@ -433,7 +432,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	/**
 	 * If the trigger has been found it will be replaced by the new trigger
 	 * @return true if the given trigger has been found and replaced, false if the trigger has not been found and no storing of the new trigger has been done
-	 * @throws when the new trigger starts a different job than the old one
+	 * @throws JobPersistenceException when the new trigger starts a different job than the old one
 	 */
 	@Override
 	public boolean replaceTrigger(final TriggerKey triggerKey, final OperableTrigger newTrigger) 
@@ -1112,7 +1111,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 				JobKey jobKey = tw.trigger.getJobKey();
 				JobDetail job = connector.getJob(ClusterCacheJobStore.generateKey(jobKey));
 				
-				if(job.isConcurrentExectionDisallowed()) { 
+				if(job.isConcurrentExecutionDisallowed()) {
 					if(concurrentExecutionDissallowedJobs.containsKey(jobKey)){
 						//Job is already referenced by fireing trigger
 						//only save the trigger that will be fired next
@@ -1299,7 +1298,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 						tw.recovering = false;
 						connector.putTriggerWrapper(triggerKey, tw);
 						
-						if(job != null && job.isConcurrentExectionDisallowed()){
+						if(job != null && job.isConcurrentExecutionDisallowed()){
 							List<TriggerWrapper> allTriggersThatFireTheJob = getTriggerWrappersForJob(job.getKey());
 							
 							connector.lockTrigger(generateKeySetFromWrapper(allTriggersThatFireTheJob));
@@ -1385,7 +1384,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	}
 	
 	private void unblockTriggersForJob(JobDetail storedJob, String jobKey) throws JobPersistenceException{
-		if(storedJob.isConcurrentExectionDisallowed()){
+		if(storedJob.isConcurrentExecutionDisallowed()){
 			List<TriggerWrapper> triggersToUnblock = this.getTriggerWrappersForJob(storedJob.getKey());
 			for(final TriggerWrapper triggerToUnblock: triggersToUnblock){
 				
@@ -1738,7 +1737,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	
 	/**
 	 * Generates a Key form a JobKey Object
-	 * @param jobKey
+	 * @param itemKey
 	 * @return a textual key
 	 */
 	public static String generateKey(Key<?> itemKey){
@@ -1784,6 +1783,23 @@ public abstract class ClusterCacheJobStore implements JobStore {
 		this.schedulerSignaler = schedulerSignaler;
 	}
 
+	// New
+	@Override
+	public long getAcquireRetryDelay(int failureCount) {
+		return 20L;
+	}
+
+	@Override
+	public void resetTriggerFromErrorState(TriggerKey triggerKey) throws JobPersistenceException {
+		synchronized (this.lock) {
+			TriggerWrapper tw = this.connector.getTriggerWrapper(triggerKey.toString());
+			if (tw != null && tw.state == TriggerWrapper.STATE_ERROR) {
+				this.storeTrigger(tw.trigger, true, false, false);
+			}
+		}
+	}
+
+	protected final Object lock = new Object();
 }
 
 interface Retry{

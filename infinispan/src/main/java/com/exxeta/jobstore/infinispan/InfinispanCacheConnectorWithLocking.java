@@ -23,13 +23,8 @@ import java.util.Set;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
+import jakarta.transaction.*;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.infinispan.manager.CacheContainer;
@@ -177,7 +172,7 @@ public class InfinispanCacheConnectorWithLocking extends InfinispanCacheConnecto
 	public void commitJobStoreTransaction() throws JobPersistenceException{
 		try {
 			this.transactionManager.commit();
-		} catch (SecurityException | IllegalStateException | 
+		} catch (SecurityException | IllegalStateException |
 				 RollbackException | HeuristicMixedException |
 				 HeuristicRollbackException | SystemException e) {
 			throw new JobPersistenceException("Couldn't commit transaction: " + e.getMessage(), e);

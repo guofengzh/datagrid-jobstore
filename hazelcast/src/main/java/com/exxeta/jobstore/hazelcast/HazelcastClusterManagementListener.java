@@ -18,12 +18,11 @@
 
 package com.exxeta.jobstore.hazelcast;
 
+import com.hazelcast.cluster.MembershipEvent;
+import com.hazelcast.cluster.MembershipListener;
 import org.jboss.logging.Logger;
 
 import com.exxeta.jobstore.ClusterCacheJobStore;
-import com.hazelcast.core.MemberAttributeEvent;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
 
 /**
  * @author Felix Finkbeiner
@@ -46,8 +45,5 @@ public class HazelcastClusterManagementListener implements MembershipListener {
 
 	@Override
 	public void memberAdded(MembershipEvent membershipEvent) {}
-
-	@Override
-	public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {}
 
 }

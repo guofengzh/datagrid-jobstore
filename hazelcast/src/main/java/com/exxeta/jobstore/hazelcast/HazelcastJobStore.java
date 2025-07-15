@@ -20,11 +20,10 @@ package com.exxeta.jobstore.hazelcast;
 
 import java.io.FileNotFoundException;
 
-import org.quartz.SchedulerConfigException;
-
 import com.exxeta.jobstore.ClusterCacheJobStore;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
+import org.quartz.SchedulerConfigException;
 
 /**
  * @author Felix Finkbeiner

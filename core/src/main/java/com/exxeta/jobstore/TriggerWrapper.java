@@ -89,5 +89,4 @@ public class TriggerWrapper implements java.io.Serializable {
 		default: return "unknwonw Trigger-state";
 		}
 	}
-
 }
