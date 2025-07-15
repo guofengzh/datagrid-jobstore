@@ -1,23 +1,66 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>com.exxeta.jobstore</groupId>
-  <artifactId>parent</artifactId>
-  <version>1.0</version>
-  <packaging>pom</packaging>
-  <name>parent</name>
-  <description>Contains all modules associated with a Quartz JobStore using a distributed key/value store.</description>
-  
-  <licenses>
-  	<license>
-  		<name>Apache License, Version 2.0</name>
-  		<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-  	</license>
-  </licenses>
-  
-  <modules>
-  	<module>core</module>
-  	<module>infinispan</module>
-  	<module>hazelcast</module>
-  </modules>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.exxeta.jobstore</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>parent</name>
+    <description>Contains all modules associated with a Quartz JobStore using a distributed key/value store.</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <hazelcast.version>5.5.0</hazelcast.version>
+        <infinispan.version>14.0.34.Final</infinispan.version>
+        <jboss-logging.version>3.6.1.Final</jboss-logging.version>
+        <junit.version>5.13.3</junit.version>
+        <mockito-core.version>5.18.0</mockito-core.version>
+        <quartz.versino>2.5.0</quartz.versino>
+        <spring-boot.version>3.4.5</spring-boot.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.versino}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>17</release>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <modules>
+        <module>core</module>
+        <module>hazelcast</module>
+        <module>infinispan</module>
+        <module>spring-boot-infinispan-quartz-starter</module>
+        <module>infinispan-quartz-demo</module>
+    </modules>
 </project>

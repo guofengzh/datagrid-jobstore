@@ -1,0 +1,29 @@
+<infinispan
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:infinispan:config:14.0 https://infinispan.org/schemas/infinispan-config-14.0.xsd"
+        xmlns="urn:infinispan:config:14.0">
+
+    <cache-container name="dtifCache" statistics="false" shutdown-hook="DEFAULT">
+        <transport lock-timeout="60000"/>
+        <replicated-cache name="jobs" mode="SYNC">
+            <locking isolation="READ_COMMITTED"/>
+            <transaction mode="NON_XA" locking="PESSIMISTIC"/>
+            <memory max-count="500" when-full="NONE"/>
+        </replicated-cache>
+        <replicated-cache name="triggers" mode="SYNC">
+            <locking isolation="READ_COMMITTED"/>
+            <transaction mode="NON_XA" locking="PESSIMISTIC"/>
+            <memory max-count="500" when-full="NONE"/>
+        </replicated-cache>
+        <replicated-cache name="calendars" mode="SYNC">
+            <locking isolation="READ_COMMITTED"/>
+            <transaction mode="NON_XA" locking="PESSIMISTIC"/>
+            <memory max-count="500" when-full="NONE"/>
+        </replicated-cache>
+        <replicated-cache name="meta" mode="SYNC">
+            <locking isolation="READ_COMMITTED"/>
+            <transaction mode="NON_XA" locking="PESSIMISTIC"/>
+            <memory max-count="500" when-full="NONE"/>
+        </replicated-cache>
+    </cache-container>
+</infinispan>

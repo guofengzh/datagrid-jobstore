@@ -21,9 +21,6 @@ package com.exxeta.jobstore.infinispan;
 import java.util.Collection;
 import java.util.Set;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import jakarta.transaction.*;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
@@ -46,22 +43,12 @@ public class InfinispanCacheConnectorWithLocking extends InfinispanCacheConnecto
 	/**For Transactions and Locking on a Class wide (Threadbased) level*/
 	protected TransactionManager transactionManager = null;
 
-	public InfinispanCacheConnectorWithLocking(	String infinispanJNDI,
+	public InfinispanCacheConnectorWithLocking(	CacheContainer infinispanContainer,
 												String infinispanJobStoreCacheJobsByKey,
 												String infinispanJobStoreCacheTriggersByKey,
 												String infinispanJobStoreCacheCalendarsByName,
 												String infinispanJobStoreCacheMetaData				
 													) throws SchedulerConfigException{
-		
-		//Get access to Infinispan
-		CacheContainer infinispanContainer;
-		try {
-			InitialContext ic = new InitialContext();
-			infinispanContainer = (CacheContainer) ic.lookup(infinispanJNDI);
-		} catch (NamingException e) {
-			e.printStackTrace();
-			throw new SchedulerConfigException("infinispanJNDI is not set propperly: " + infinispanJNDI);
-		}
 		
 		//setup cache
 		Cache<String, JobDetail> jobsByKeyTempCache = infinispanContainer.getCache(infinispanJobStoreCacheJobsByKey);

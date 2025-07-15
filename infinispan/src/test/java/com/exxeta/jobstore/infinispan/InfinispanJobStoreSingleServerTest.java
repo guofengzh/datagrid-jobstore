@@ -18,10 +18,7 @@
 
 package com.exxeta.jobstore.infinispan;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,12 +38,10 @@ import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.eviction.EvictionStrategy;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.quartz.Calendar;
 import org.quartz.JobDataMap;
@@ -84,12 +79,12 @@ public class InfinispanJobStoreSingleServerTest {
 	private static AdvancedCache<String, Calendar> calendarCache;
 	private static AdvancedCache<String, Set<String>> metaCache;
 	
-	@AfterClass
+	@AfterAll
 	public static void cacheManagerTeardown(){
 		cacheManager.stop();
 	}
 
-	@Before
+	@BeforeEach
 	public void setUpClusterRessources(){
 		String triggerCacheName = "triggers";
 		String jobCacheName = "jobs";
@@ -102,12 +97,13 @@ public class InfinispanJobStoreSingleServerTest {
 		cacheManager = new DefaultCacheManager(global.build());
 
 		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.memory().maxCount(500).whenFull(EvictionStrategy.NONE);
 		builder.clustering().cacheMode(CacheMode.LOCAL);
-		Configuration c = builder.build();
-		cacheManager.defineConfiguration(triggerCacheName, c);
-		cacheManager.defineConfiguration(jobCacheName, c);
-		cacheManager.defineConfiguration(calendarCacheName, c);
-		cacheManager.defineConfiguration(metaCacheName, c);
+		Configuration cacheConfig = builder.build();
+		cacheManager.defineConfiguration(triggerCacheName, cacheConfig);
+		cacheManager.defineConfiguration(jobCacheName, cacheConfig);
+		cacheManager.defineConfiguration(calendarCacheName, cacheConfig);
+		cacheManager.defineConfiguration(metaCacheName, cacheConfig);
 
 		//Trigger Cache
 		Cache<String, TriggerWrapper> tempTriggerCache = cacheManager.getCache(triggerCacheName);
@@ -132,7 +128,7 @@ public class InfinispanJobStoreSingleServerTest {
 		js.setConnector(connector);
 	}
 	
-	@After
+	@AfterEach
 	public void cleanUpCluster(){
 		triggerCache.clear();
 		jobCache.clear();

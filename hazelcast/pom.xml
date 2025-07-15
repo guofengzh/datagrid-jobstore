@@ -20,21 +20,21 @@
   	<dependency>
   		<groupId>com.exxeta.jobstore</groupId>
   		<artifactId>core</artifactId>
-  		<version>1.0</version>
+  		<version>${project.version}</version>
   	</dependency>
 	
 	<dependency>
 	    <groupId>com.hazelcast</groupId>
 	    <artifactId>hazelcast</artifactId>
-	    <version>5.5.0</version>
+	    <version>${hazelcast.version}</version>
 	</dependency>
-	
+
 	<!--dependency>
 		<groupId>com.hazelcast</groupId>
 		<artifactId>hazelcast-jca</artifactId>
 		<version>3.5</version>
 	</dependency-->
-	
+
   </dependencies>
   
   
@@ -43,10 +43,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
-        <configuration>
-            <release>17</release>
-        </configuration>
       </plugin>
     </plugins>
   </build>

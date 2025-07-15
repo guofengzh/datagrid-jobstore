@@ -108,7 +108,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	@Override
 	public void initialize(ClassLoadHelper loadHelper,
 			SchedulerSignaler signaler) throws SchedulerConfigException {
-		
+
 		this.createCacheConnector();
 		
 		this.schedulerSignaler = signaler;
@@ -130,7 +130,6 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	@Override
 	public void storeJob(final JobDetail newJob, final boolean replaceExisting)
 			throws ObjectAlreadyExistsException, JobPersistenceException {
-		
 		
 		connector.doInTransaction(new TransactionScoped() {
 			
@@ -1792,7 +1791,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	@Override
 	public void resetTriggerFromErrorState(TriggerKey triggerKey) throws JobPersistenceException {
 		synchronized (this.lock) {
-			TriggerWrapper tw = this.connector.getTriggerWrapper(triggerKey.toString());
+			TriggerWrapper tw = this.connector.getTriggerWrapper(generateKey(triggerKey));
 			if (tw != null && tw.state == TriggerWrapper.STATE_ERROR) {
 				this.storeTrigger(tw.trigger, true, false, false);
 			}

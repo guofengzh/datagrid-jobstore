@@ -20,10 +20,12 @@ package com.exxeta.jobstore.infinispan;
 
 import java.util.Set;
 
+import org.infinispan.manager.DefaultCacheManager;
 import org.jboss.logging.Logger;
 import org.quartz.SchedulerConfigException;
 
 import com.exxeta.jobstore.ClusterCacheJobStore;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author Felix Finkbeiner
@@ -40,13 +42,13 @@ public class InfinispanJobStore extends ClusterCacheJobStore {
 	
 	@Override
 	protected void createCacheConnector() throws SchedulerConfigException{
-		
-		this.connector = new InfinispanCacheConnectorWithLocking(	infinispanJNDI, 
+		ApplicationContext context = SpringApplicationContextStore.getApplicationContext();
+		DefaultCacheManager defaultCacheManager = context.getBean(DefaultCacheManager.class);
+		this.connector = new InfinispanCacheConnectorWithLocking(	defaultCacheManager,
 																	infinispanJobStoreCacheJobsByKey, 
 																	infinispanJobStoreCacheTriggersByKey, 
 																	infinispanJobStoreCacheCalendarsByName, 
 																	infinispanJobStoreCacheMetaData);
-		
 	}
 	
 	/**

@@ -250,7 +250,8 @@ public abstract class InfinispanCacheConnectorSupport extends CacheConnector {
 	}
 	
 	public String getNodeID(){
-		return System.getProperty("jboss.node.name");
+		// The logical address format is typically: <hostname>-<integer>
+		return jobsByKey.getCacheManager().getAddress().toString();
 	}
 	
 	/* (non-Javadoc)
