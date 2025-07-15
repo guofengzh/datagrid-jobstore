@@ -11,11 +11,11 @@ Configuration of Quartz in `quartz.properties` is now placed in the `application
 # application.properties
 org.quartz.threadPool.threadCount = 3
 ```
-This project supports some default configurations, see [QuartzInfinispanStoreAutoConfiguration.java](https://github.com/guofengzh/datagrid-jobstore/blob/master/spring-boot-infinispan-quartz-starter/src/main/java/com/exxeta/jobstore/infinispan/autoconfig/QuartzInfinispanStoreAutoConfiguration.java).
+This project supports some default configurations, see [`QuartzInfinispanStoreAutoConfiguration.java`](https://github.com/guofengzh/datagrid-jobstore/blob/master/spring-boot-infinispan-quartz-starter/src/main/java/com/exxeta/jobstore/infinispan/autoconfig/QuartzInfinispanStoreAutoConfiguration.java).
 
 ## Sample Application
 
-[infinispan-quartz-demo](https://github.com/guofengzh/datagrid-jobstore/blob/master/infinispan-quartz-demo/src/main/resources/infinispan.xml) is a sample application. The content of `infinispan.xml` is a required configuration. This configuration file is referenced by the application.yml file. This is required by [infinispan-spring-boot3-starter-embedded](https://infinispan.org/docs/stable/titles/spring_boot/starter.html) to configure Infinispan.
+[infinispan-quartz-demo](https://github.com/guofengzh/datagrid-jobstore/tree/master/infinispan-quartz-demo) is a sample application. The content of [`infinispan.xml`](https://github.com/guofengzh/datagrid-jobstore/blob/master/infinispan-quartz-demo/src/main/resources/infinispan.xml) is a required configuration. This configuration file is referenced by the application.yml file. This is required by [infinispan-spring-boot3-starter-embedded](https://infinispan.org/docs/stable/titles/spring_boot/starter.html) to configure Infinispan.
 
 > The following is the original readme content, please refer to the [original project](https://github.com/EXXETA/datagrid-jobstore).
 
