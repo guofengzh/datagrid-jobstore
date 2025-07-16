@@ -177,8 +177,8 @@ public abstract class CacheConnector {
 			throw jpe;
 		} catch(Throwable throwable){
 			this.rollbackTransaction();
-			LOGGER_TRANSACTION.error(throwable.getMessage());
-			throw new JobPersistenceException("Exception in TransactionScope");
+			LOGGER_TRANSACTION.error(throwable.getMessage(), throwable);
+			throw new JobPersistenceException("Exception in TransactionScope", throwable);
 		}
 			
 		this.commitTransaction();

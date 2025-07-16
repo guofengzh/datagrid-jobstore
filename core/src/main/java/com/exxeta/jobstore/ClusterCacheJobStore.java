@@ -269,7 +269,7 @@ public abstract class ClusterCacheJobStore implements JobStore {
 		
 		for(String triggerKey: connector.getAllTriggerKeys()){ 
 			TriggerWrapper tw = connector.getTriggerWrapper(triggerKey);
-			if(tw.trigger.getJobKey().equals(jobKey)){
+			if(tw != null && tw.trigger.getJobKey().equals(jobKey)){
 				jobsTriggers.add(tw);
 			}
 		}

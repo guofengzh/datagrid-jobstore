@@ -33,7 +33,7 @@ public class JobsListenerService implements JobListener {
         logger.info(
             "Job was executed " +
             context.getJobDetail().getKey().getName() +
-            (jobException != null ? ", with error" : "")
+            (jobException != null ? ", with error" + jobException : "")
         );
     }
 }
