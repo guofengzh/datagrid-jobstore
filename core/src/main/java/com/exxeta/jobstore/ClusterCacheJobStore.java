@@ -1785,14 +1785,16 @@ public abstract class ClusterCacheJobStore implements JobStore {
 	// New
 	@Override
 	public long getAcquireRetryDelay(int failureCount) {
-		return 20L;
+		return 15000L;
 	}
 
 	@Override
 	public void resetTriggerFromErrorState(TriggerKey triggerKey) throws JobPersistenceException {
 		synchronized (this.lock) {
+			LOGGER_RECOVERY.debug("resetTriggerFromErrorState, id = " + triggerKey.getName());
 			TriggerWrapper tw = this.connector.getTriggerWrapper(generateKey(triggerKey));
 			if (tw != null && tw.state == TriggerWrapper.STATE_ERROR) {
+				tw.state = TriggerWrapper.STATE_NORMAL;
 				this.storeTrigger(tw.trigger, true, false, false);
 			}
 		}
